@@ -3,290 +3,442 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة تعلمي - متجاوب</title>
-    <!-- Tailwind CSS for styling -->
+    <title>منصة لغتي - نظام إدارة التعلم المتكامل</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
         body {
             font-family: 'Tajawal', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        .tab-content {
-            display: none;
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .tab-content.active {
-            display: block;
+        .gradient-text {
+            background: linear-gradient(90deg, #4f46e5, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        /* Custom scrollbar for better look on Desktop */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
 
-    <!-- Switcher Bar - Fixed at top -->
-    <div class="bg-gray-900 text-white p-3 flex justify-center gap-2 sm:gap-4 text-xs sm:text-sm sticky top-0 z-50 shadow-lg">
-        <span class="opacity-60 hidden sm:inline text-white">نمط العرض:</span>
-        <button onclick="switchView('user')" id="btn-user-view" class="px-3 py-1.5 rounded-full bg-blue-600 text-white transition-all font-bold">
-            واجهة المستخدم
+    <!-- Header Switcher -->
+    <div class="bg-indigo-900 text-white p-3 flex justify-center gap-4 text-xs sm:text-sm sticky top-0 z-50 shadow-xl">
+        <button onclick="switchView('user')" id="btn-user-view" class="px-5 py-2 rounded-full bg-white text-indigo-900 transition-all font-black shadow-inner">
+            تصفح كطالب
         </button>
-        <button onclick="switchView('admin')" id="btn-admin-view" class="px-3 py-1.5 rounded-full hover:bg-gray-700 transition-all font-bold">
-            واجهة الأدمن
+        <button onclick="switchView('admin')" id="btn-admin-view" class="px-5 py-2 rounded-full hover:bg-indigo-800 transition-all font-black">
+            لوحة التحكم (Admin)
         </button>
     </div>
 
     <!-- User View Section -->
     <div id="user-view" class="view-section p-4 sm:p-6 lg:p-10 max-w-7xl mx-auto">
-        <!-- Main Courses List -->
+        <!-- Main List -->
         <div id="courses-list-container">
-            <header class="mb-8 text-center sm:text-right">
-                <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 border-r-0 sm:border-r-4 border-blue-600 sm:pr-4">منصة تعلمي</h1>
-                <p class="text-gray-500 mt-2 text-sm sm:text-base">استكشف أفضل الدورات التدريبية وابدأ رحلتك التعليمية</p>
+            <header class="mb-12 text-center">
+                <h1 class="text-4xl sm:text-5xl font-black mb-4 gradient-text">منصة لُغتي العربية</h1>
+                <p class="text-slate-500 text-lg">بوابتك لإتقان لغة الضاد، من القواعد إلى أعذب اللهجات</p>
             </header>
-            <div id="user-courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div id="user-courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Courses injected here -->
             </div>
         </div>
 
-        <!-- Course Lessons View (Hidden by default) -->
+        <!-- Lessons View & Player -->
         <div id="course-lessons-container" class="hidden">
-            <button onclick="backToCourses()" class="flex items-center text-blue-600 mb-6 hover:gap-2 transition-all font-bold">
-                <i data-lucide="arrow-right" class="w-5 h-5 ml-2"></i>
-                العودة لجميع الدورات
+            <button onclick="backToCourses()" class="flex items-center text-indigo-600 mb-8 hover:pr-2 transition-all font-bold group">
+                <i data-lucide="arrow-right" class="w-6 h-6 ml-2 bg-indigo-100 p-1 rounded-full group-hover:bg-indigo-600 group-hover:text-white transition-all"></i>
+                العودة للمكتبة التعليمية
             </button>
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <h2 id="selected-course-title" class="text-2xl font-bold mb-2">اسم الدورة</h2>
-                <p id="selected-course-meta" class="text-gray-500 text-sm mb-6">3 مقاطع فيديو • 10 ساعات</p>
-                
-                <div class="space-y-4" id="lessons-list">
-                    <!-- Lessons injected here -->
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="aspect-video bg-black rounded-[2rem] shadow-2xl flex items-center justify-center overflow-hidden relative group">
+                        <div id="video-placeholder" class="text-white text-center p-6">
+                            <i data-lucide="play-circle" class="w-20 h-20 mx-auto mb-4 text-indigo-500 opacity-50"></i>
+                            <p class="text-xl font-bold">اختر درساً للبدء في المشاهدة</p>
+                        </div>
+                        <div id="active-video-info" class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white hidden">
+                            <h4 id="playing-lesson-title" class="text-lg font-bold"></h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+                        <h2 id="selected-course-title" class="text-3xl font-black text-slate-800 mb-2">اسم الدورة</h2>
+                        <div id="selected-course-meta" class="text-slate-500 mb-4 flex flex-wrap gap-4 font-medium"></div>
+                        <p id="selected-course-desc" class="text-slate-600 leading-relaxed"></p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-6 shadow-xl border border-indigo-50 h-fit">
+                    <h3 class="text-xl font-black mb-6 flex items-center gap-2">
+                        <i data-lucide="list-video" class="text-indigo-600"></i>
+                        محتوى الدورة
+                    </h3>
+                    <div class="grid grid-cols-1 gap-3" id="lessons-list">
+                        <!-- Lessons injected here -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Admin View Section -->
-    <div id="admin-view" class="view-section hidden min-h-screen">
-        <div class="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-            <!-- Sidebar for Desktop / Top Bar for Mobile -->
-            <aside class="w-full lg:w-64 bg-white border-b lg:border-b-0 lg:border-l border-gray-200 p-4 lg:p-6 sticky top-[48px] lg:top-[52px] z-40">
-                <div class="hidden lg:flex items-center mb-10 gap-3 text-blue-600">
-                    <i data-lucide="settings" class="w-8 h-8 text-blue-600"></i>
-                    <span class="font-bold text-xl text-gray-900">لوحة الإدارة</span>
+    <div id="admin-view" class="view-section hidden min-h-screen bg-slate-100">
+        <div class="flex flex-col lg:flex-row min-h-screen">
+            <aside class="w-full lg:w-72 bg-white border-l border-slate-200 p-6 sticky top-[52px] z-40">
+                <div class="hidden lg:flex items-center mb-10 gap-3">
+                    <div class="bg-indigo-600 p-2 rounded-lg">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+                    </div>
+                    <span class="font-black text-xl tracking-tight">لوحة الإدارة</span>
                 </div>
                 
-                <nav class="flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 pb-2 lg:pb-0 scrollbar-hide">
-                    <button onclick="switchAdminTab('stats')" id="tab-btn-stats" class="admin-tab-btn whitespace-nowrap flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl bg-blue-50 text-blue-600 transition-all flex-shrink-0 lg:flex-shrink">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                        <span class="text-sm sm:text-base">الإحصائيات</span>
+                <nav class="flex lg:flex-col overflow-x-auto gap-3">
+                    <button onclick="switchAdminTab('stats')" id="tab-btn-stats" class="admin-tab-btn whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl bg-indigo-50 text-indigo-700 font-bold transition-all shrink-0">
+                        <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                        <span>التقارير المالية</span>
                     </button>
-                    <button onclick="switchAdminTab('upload')" id="tab-btn-upload" class="admin-tab-btn whitespace-nowrap flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all flex-shrink-0 lg:flex-shrink">
-                        <i data-lucide="video" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                        <span class="text-sm sm:text-base">رفع المقاطع</span>
+                    <button onclick="switchAdminTab('add-course')" id="tab-btn-add-course" class="admin-tab-btn whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 font-bold transition-all shrink-0">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        <span>إضافة دورة جديدة</span>
                     </button>
-                    <button onclick="switchAdminTab('addCourse')" id="tab-btn-addCourse" class="admin-tab-btn whitespace-nowrap flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all flex-shrink-0 lg:flex-shrink">
-                        <i data-lucide="plus-circle" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-                        <span class="text-sm sm:text-base">إضافة دورة</span>
+                    <button onclick="switchAdminTab('manage-lessons')" id="tab-btn-manage-lessons" class="admin-tab-btn whitespace-nowrap flex items-center gap-3 px-4 py-3 rounded-2xl text-slate-500 hover:bg-slate-50 font-bold transition-all shrink-0">
+                        <i data-lucide="clapperboard" class="w-5 h-5"></i>
+                        <span>إضافة دروس</span>
                     </button>
                 </nav>
             </aside>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 p-4 sm:p-6 lg:p-10 overflow-x-hidden">
-                <!-- Tab: Statistics -->
-                <div id="tab-stats" class="tab-content active space-y-6 sm:y-8">
-                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800">ملخص النظام</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                        <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-xs sm:text-sm">إجمالي المشتركين</p>
-                                <span id="total-students" class="text-2xl sm:text-3xl font-bold mt-1 block text-gray-800">0</span>
-                            </div>
-                            <div class="bg-blue-50 p-3 rounded-xl">
-                                <i data-lucide="users" class="text-blue-500 w-6 h-6 sm:w-8 sm:h-8"></i>
-                            </div>
+            <main class="flex-1 p-6 lg:p-12">
+                <div id="tab-stats" class="tab-content active space-y-8">
+                    <h2 class="text-3xl font-black text-slate-800">نظرة عامة على الأداء</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="bg-gradient-to-br from-indigo-600 to-blue-700 p-8 rounded-[2rem] text-white shadow-lg">
+                            <p class="opacity-80 font-medium text-sm">إجمالي الطلاب</p>
+                            <h3 id="total-students" class="text-4xl font-black mt-2">0</h3>
                         </div>
-                        <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-xs sm:text-sm">إجمالي الإيرادات</p>
-                                <span id="total-revenue" class="text-2xl sm:text-3xl font-bold mt-1 block text-green-600">0 ريال</span>
-                            </div>
-                            <div class="bg-green-50 p-3 rounded-xl">
-                                <i data-lucide="dollar-sign" class="text-green-500 w-6 h-6 sm:w-8 sm:h-8"></i>
-                            </div>
+                        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-8 rounded-[2rem] text-white shadow-lg">
+                            <p class="opacity-80 font-medium text-sm">الأرباح الكلية</p>
+                            <h3 id="total-revenue" class="text-4xl font-black mt-2">0 ريال</h3>
                         </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-5 border-b border-gray-50 font-bold text-base sm:text-lg">إحصائيات كل دورة</div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right min-w-[500px]">
-                                <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
-                                    <tr>
-                                        <th class="p-4">اسم الدورة</th>
-                                        <th class="p-4 text-center">المشتركين</th>
-                                        <th class="p-4 text-center">السعر</th>
-                                        <th class="p-4 text-center font-bold">الدخل</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-courses-table" class="divide-y divide-gray-100 text-sm sm:text-base text-gray-700">
-                                    <!-- Table rows injected here -->
-                                </tbody>
-                            </table>
+                        <div class="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
+                            <p class="text-slate-500 font-medium text-sm">عدد الدورات</p>
+                            <h3 id="total-courses-count" class="text-4xl font-black mt-2 text-indigo-600">0</h3>
                         </div>
                     </div>
                 </div>
 
-                <!-- Tab: Upload Video -->
-                <div id="tab-upload" class="tab-content max-w-2xl bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100 mx-auto">
-                    <h2 class="text-xl sm:text-2xl font-bold mb-6 text-gray-800">رفع مقطع فيديو جديد</h2>
-                    <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 sm:p-12 flex flex-col items-center justify-center text-gray-400 hover:border-blue-400 transition-colors cursor-pointer text-center">
-                        <i data-lucide="video" class="w-10 h-10 sm:w-12 sm:h-12 mb-4 text-gray-400"></i>
-                        <p class="text-sm sm:text-base">اسحب الفيديو هنا أو اضغط للاختيار</p>
-                    </div>
-                    <div class="mt-6 space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1 text-gray-700">اختر الدورة</label>
-                            <select id="course-select-upload" class="w-full border p-2.5 rounded-lg bg-white outline-none focus:ring-2 focus:ring-blue-500 text-sm">
-                                <!-- Options injected here -->
-                            </select>
+                <div id="tab-add-course" class="tab-content space-y-8">
+                    <div class="max-w-2xl bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+                        <h2 class="text-3xl font-black text-slate-800 mb-8">إطلاق دورة تعليمية جديدة</h2>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">اسم الدورة</label>
+                                <input type="text" id="new-course-title" placeholder="مثال: أساسيات العروض والقوافي" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">وصف قصير</label>
+                                <textarea id="new-course-desc" placeholder="اشرح للطلاب ماذا سيتعلمون..." class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all h-32"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">السعر (بالريال)</label>
+                                    <input type="number" id="new-course-price" placeholder="199" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">الأيقونة</label>
+                                    <select id="new-course-icon" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
+                                        <option value="pen-tool">قلم (نحو/كتابة)</option>
+                                        <option value="languages">ترجمة (لهجات)</option>
+                                        <option value="mic">ميكروفون (خطابة)</option>
+                                        <option value="book-open">كتاب (قراءة)</option>
+                                        <option value="feather">ريشة (شعر وأدب)</option>
+                                        <option value="edit-3">تعديل (إملاء)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="createNewCourse()" class="w-full py-5 bg-indigo-600 text-white rounded-2xl font-black text-lg hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all flex items-center justify-center gap-3">
+                                <i data-lucide="sparkles"></i>
+                                نشر الدورة الآن
+                            </button>
                         </div>
-                        <button onclick="mockAction('تم بدء عملية الرفع بنجاح (محاكاة)')" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-bold text-sm sm:text-base">
-                            بدء الرفع
-                        </button>
                     </div>
                 </div>
 
-                <!-- Tab: Add Course -->
-                <div id="tab-addCourse" class="tab-content max-w-2xl bg-white p-5 sm:p-8 rounded-2xl shadow-sm border border-gray-100 mx-auto">
-                    <h2 class="text-xl sm:text-2xl font-bold mb-6 text-center sm:text-right text-gray-800">إضافة دورة جديدة</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium mb-1 text-gray-700">عنوان الدورة</label>
-                            <input type="text" class="w-full border border-gray-300 p-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm" placeholder="مثلاً: دورة التصميم..." />
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div id="tab-manage-lessons" class="tab-content space-y-8">
+                    <div class="max-w-2xl bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100">
+                        <h2 class="text-3xl font-black text-slate-800 mb-8">إضافة محتوى فيديو للدورة</h2>
+                        <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium mb-1 text-gray-700">السعر (ريال)</label>
-                                <input type="number" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm" placeholder="0.00" />
+                                <label class="block text-sm font-bold text-slate-700 mb-2">اختر الدورة</label>
+                                <select id="lesson-course-select" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all"></select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-1 text-gray-700">مدة الدورة</label>
-                                <input type="text" class="w-full border border-gray-300 p-2.5 rounded-lg text-sm" placeholder="مثلاً: 10 ساعات" />
+                                <label class="block text-sm font-bold text-slate-700 mb-2">عنوان الدرس</label>
+                                <input type="text" id="new-lesson-title" placeholder="مثال: مقدمة في المبتدأ والخبر" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
                             </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">مدة الدرس (دقائق)</label>
+                                <input type="text" id="new-lesson-time" placeholder="15:30" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-indigo-500 focus:outline-none transition-all">
+                            </div>
+                            <button onclick="addNewLesson()" class="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-lg hover:bg-emerald-700 shadow-xl shadow-emerald-100 transition-all flex items-center justify-center gap-3">
+                                <i data-lucide="video"></i>
+                                إضافة الدرس للمحتوى
+                            </button>
                         </div>
-                        <button onclick="mockAction('تمت إضافة الدورة بنجاح (محاكاة)')" class="w-full bg-green-600 text-white py-3.5 rounded-lg font-bold hover:bg-green-700 transition-colors mt-4 shadow-md text-sm sm:text-base text-white">
-                            حفظ وإضافة الدورة
-                        </button>
                     </div>
                 </div>
             </main>
         </div>
     </div>
 
-    <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 sm:left-6 sm:translate-x-0 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl transform translate-y-32 transition-transform duration-300 z-[60] text-sm font-medium text-center min-w-[250px]">
-        رسالة تنبيه
+    <!-- Notification -->
+    <div id="toast" class="fixed bottom-8 right-8 bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl transform translate-y-40 transition-all duration-500 z-[100] font-bold">
+        تنبيه
     </div>
 
     <script>
-        // --- البيانات التجريبية الموسعة ---
-        const INITIAL_COURSES = [
+        // Data Store with increased initial courses
+        let COURSES = [
             { 
                 id: 1, 
-                title: 'دورة البرمجة بلغة Python', 
-                students: 120, 
-                price: 299, 
-                duration: '10 ساعات', 
-                income: 35880,
+                title: 'أسرار النحو وقواعد الإعراب', 
+                desc: 'من المبتدئ إلى الاحتراف في قواعد اللغة العربية بأسلوب مبسط وشامل.',
+                icon: 'pen-tool',
+                color: '#6366f1',
+                gradient: 'from-indigo-500 to-blue-600',
+                students: 1250, 
+                price: 199, 
+                duration: '12 ساعة', 
                 lessons: [
-                    'مقدمة في بايثون وتثبيت الأدوات',
-                    'المتغيرات وأنواع البيانات',
-                    'الدوال والجمل الشرطية',
-                    'التعامل مع قواعد البيانات'
+                    { title: 'أنواع الكلمة: اسم وفعل وحرف', time: '10:00' },
+                    { title: 'الجملة الاسمية ومبتدأها وخبرها', time: '15:20' },
+                    { title: 'كان وأخواتها وتأثيرها في الإعراب', time: '12:45' }
                 ]
             },
             { 
                 id: 2, 
-                title: 'تصميم واجهات المستخدم UI/UX', 
-                students: 85, 
-                price: 150, 
-                duration: '8 ساعات', 
-                income: 12750,
+                title: 'رحلة في اللهجات العربية', 
+                desc: 'تعلم كيف تتحدث بلهجات الخليج، الشام، ومصر وفهم الفروقات الثقافية.',
+                icon: 'languages',
+                color: '#f59e0b',
+                gradient: 'from-amber-400 to-orange-600',
+                students: 2100, 
+                price: 140, 
+                duration: '9 ساعات', 
                 lessons: [
-                    'مفهوم الـ UX والبحث عن المستخدمين',
-                    'استخدام أدوات التصميم (Figma)',
-                    'أساسيات اختيار الألوان والخطوط',
-                    'بناء النموذج الأولي التفاعلي'
+                    { title: 'مفردات التحية والترحيب في الخليج', time: '08:30' },
+                    { title: 'خفة الدم والمصطلحات المصرية الأصيلة', time: '11:15' }
                 ]
             },
             { 
                 id: 3, 
-                title: 'أساسيات التسويق الرقمي', 
-                students: 200, 
-                price: 100, 
-                duration: '5 ساعات', 
-                income: 20000,
+                title: 'بلاغة القول وفنون الأدب', 
+                desc: 'استكشاف التشبيه والاستعارة والكناية في عيون الشعر والنثر العربي.',
+                icon: 'feather',
+                color: '#ec4899',
+                gradient: 'from-pink-500 to-rose-600',
+                students: 850, 
+                price: 250, 
+                duration: '15 ساعة', 
                 lessons: [
-                    'مقدمة في عالم التسويق الرقمي',
-                    'تحسين محركات البحث SEO',
-                    'إدارة حملات التواصل الاجتماعي',
-                    'تحليل البيانات وقياس الأداء'
+                    { title: 'علم البيان: مدخل إلى التشبيه', time: '18:00' },
+                    { title: 'أسرار الاستعارة المكنية والتصريحية', time: '22:10' }
                 ]
             },
+            { 
+                id: 4, 
+                title: 'الخطابة والتأثير الجماهيري', 
+                desc: 'دورة تطبيقية لتطوير مهارات التحدث أمام الجمهور والثقة بالنفس.',
+                icon: 'mic',
+                color: '#8b5cf6',
+                gradient: 'from-violet-500 to-purple-600',
+                students: 620, 
+                price: 320, 
+                duration: '8 ساعات', 
+                lessons: [
+                    { title: 'كسر حاجز الخوف والوقوف بثبات', time: '12:00' },
+                    { title: 'نبرات الصوت وتلوين الأداء', time: '14:30' }
+                ]
+            },
+            { 
+                id: 5, 
+                title: 'قواعد الإملاء والكتابة السليمة', 
+                desc: 'وداعاً للأخطاء الإملائية الشائعة، تعلم كتابة الهمزات والتاءات والضاد والظاء.',
+                icon: 'edit-3',
+                color: '#10b981',
+                gradient: 'from-emerald-500 to-teal-600',
+                students: 3400, 
+                price: 99, 
+                duration: '6 ساعات', 
+                lessons: [
+                    { title: 'مواضع الهمزة في أول الكلمة', time: '09:15' },
+                    { title: 'الفرق بين التاء المربوطة والمفتوحة', time: '07:45' }
+                ]
+            },
+            { 
+                id: 6, 
+                title: 'علم الصرف وبناء الكلمة', 
+                desc: 'فهم أوزان الكلمات والاشتقاق وكيفية توليد معاني جديدة من جذور واحدة.',
+                icon: 'book-open',
+                color: '#3b82f6',
+                gradient: 'from-blue-500 to-cyan-600',
+                students: 450, 
+                price: 180, 
+                duration: '10 ساعات', 
+                lessons: [
+                    { title: 'الميزان الصرفي: فعل وفعلل', time: '15:00' },
+                    { title: 'المجرد والمزيد من الأفعال', time: '13:20' }
+                ]
+            }
         ];
 
         function initApp() {
             renderUserCourses();
-            renderAdminStats();
-            renderAdminTable();
-            renderUploadSelect();
+            updateStats();
+            populateCourseSelect();
             lucide.createIcons();
         }
 
-        // --- وظائف عرض الدورة ومحتواها ---
-        function openCourse(courseId) {
-            const course = INITIAL_COURSES.find(c => c.id === courseId);
-            if (!course) return;
+        function createNewCourse() {
+            const title = document.getElementById('new-course-title').value;
+            const desc = document.getElementById('new-course-desc').value;
+            const price = parseInt(document.getElementById('new-course-price').value);
+            const icon = document.getElementById('new-course-icon').value;
 
-            // تحديث محتوى الصفحة
-            document.getElementById('selected-course-title').textContent = course.title;
-            document.getElementById('selected-course-meta').textContent = `${course.lessons.length} مقاطع فيديو • ${course.duration}`;
+            if (!title || !desc || !price) return showToast('يرجى إكمال كافة الحقول');
+
+            const gradients = ['from-purple-500 to-pink-600', 'from-emerald-500 to-teal-600', 'from-cyan-500 to-blue-600', 'from-orange-500 to-red-600'];
+            const randomGrad = gradients[Math.floor(Math.random() * gradients.length)];
+
+            const newCourse = {
+                id: COURSES.length + 1,
+                title,
+                desc,
+                price,
+                icon,
+                color: '#6366f1',
+                gradient: randomGrad,
+                students: 0,
+                duration: '0 ساعات',
+                lessons: []
+            };
+
+            COURSES.push(newCourse);
+            renderUserCourses();
+            updateStats();
+            populateCourseSelect();
+            showToast('تمت إضافة الدورة بنجاح!');
             
-            const lessonsList = document.getElementById('lessons-list');
-            lessonsList.innerHTML = course.lessons.map((lesson, index) => `
-                <div class="flex items-center p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:bg-blue-50 hover:border-blue-100 transition-all cursor-pointer group" onclick="mockAction('بدء تشغيل: ${lesson}')">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center ml-4 shadow-sm text-blue-600 font-bold">
-                        ${index + 1}
+            document.getElementById('new-course-title').value = '';
+            document.getElementById('new-course-desc').value = '';
+            document.getElementById('new-course-price').value = '';
+        }
+
+        function addNewLesson() {
+            const courseId = parseInt(document.getElementById('lesson-course-select').value);
+            const title = document.getElementById('new-lesson-title').value;
+            const time = document.getElementById('new-lesson-time').value;
+
+            if (!title || !time) return showToast('يرجى تعبئة بيانات الدرس');
+
+            const course = COURSES.find(c => c.id === courseId);
+            course.lessons.push({ title, time });
+            
+            showToast(`تمت إضافة الدرس إلى ${course.title}`);
+            document.getElementById('new-lesson-title').value = '';
+            document.getElementById('new-lesson-time').value = '';
+        }
+
+        function populateCourseSelect() {
+            const select = document.getElementById('lesson-course-select');
+            select.innerHTML = COURSES.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        }
+
+        function renderUserCourses() {
+            const grid = document.getElementById('user-courses-grid');
+            grid.innerHTML = COURSES.map(course => `
+                <div class="group bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden hover:-translate-y-2 transition-all duration-500 cursor-pointer" onclick="openCourse(${course.id})">
+                    <div class="h-48 bg-gradient-to-br ${course.gradient} p-8 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10 rotate-12">
+                             <i data-lucide="${course.icon}" class="w-32 h-32 text-white"></i>
+                        </div>
+                        <div class="bg-white/20 backdrop-blur-md w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg">
+                            <i data-lucide="${course.icon}" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <span class="text-white/80 font-bold text-sm tracking-widest uppercase">دورة معتمدة</span>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="font-bold text-gray-800 group-hover:text-blue-600 transition-colors">${lesson}</h4>
-                        <span class="text-xs text-gray-400">فيديو • 15:00 دقيقة</span>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-black text-slate-800 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1">${course.title}</h3>
+                        <p class="text-slate-500 text-sm mb-6 leading-relaxed line-clamp-2 h-10">${course.desc}</p>
+                        <div class="flex items-center justify-between text-slate-400">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                                <span class="text-xs font-bold">${course.students.toLocaleString()} طالب</span>
+                            </div>
+                            <div class="text-indigo-600 font-black text-lg">
+                                ${course.price} ريال
+                            </div>
+                        </div>
                     </div>
-                    <i data-lucide="play" class="w-5 h-5 text-gray-300 group-hover:text-blue-600 transition-all"></i>
                 </div>
             `).join('');
+            lucide.createIcons();
+        }
 
-            // تبديل الواجهات
+        function openCourse(id) {
+            const course = COURSES.find(c => c.id === id);
+            document.getElementById('selected-course-title').textContent = course.title;
+            document.getElementById('selected-course-desc').textContent = course.desc;
+            document.getElementById('selected-course-meta').innerHTML = `
+                <span class="flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold"><i data-lucide="play-circle" class="w-4 h-4"></i> ${course.lessons.length} دروس</span>
+                <span class="flex items-center gap-1 bg-slate-100 px-3 py-1 rounded-full text-xs font-bold"><i data-lucide="clock" class="w-4 h-4"></i> ${course.duration}</span>
+                <span class="flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold"><i data-lucide="award" class="w-4 h-4"></i> شهادة معتمدة</span>
+            `;
+
+            const list = document.getElementById('lessons-list');
+            list.innerHTML = course.lessons.length > 0 ? course.lessons.map((lesson, idx) => `
+                <div class="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all cursor-pointer group lesson-item" onclick="playLesson('${lesson.title}')">
+                    <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center font-black text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                        ${idx + 1}
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-slate-800 text-sm">${lesson.title}</h4>
+                        <span class="text-[10px] font-medium text-slate-400">${lesson.time} دقيقة</span>
+                    </div>
+                    <i data-lucide="play" class="w-4 h-4 text-slate-300 group-hover:text-indigo-600"></i>
+                </div>
+            `).join('') : '<p class="text-center py-10 text-slate-400 font-medium">لا توجد دروس حالياً</p>';
+
             document.getElementById('courses-list-container').classList.add('hidden');
             document.getElementById('course-lessons-container').classList.remove('hidden');
             
+            document.getElementById('video-placeholder').classList.remove('hidden');
+            document.getElementById('active-video-info').classList.add('hidden');
+            
             lucide.createIcons();
             window.scrollTo(0, 0);
+        }
+
+        function playLesson(title) {
+            document.getElementById('video-placeholder').classList.add('hidden');
+            const info = document.getElementById('active-video-info');
+            info.classList.remove('hidden');
+            document.getElementById('playing-lesson-title').textContent = title;
+            showToast(`جارِ تشغيل: ${title}`);
         }
 
         function backToCourses() {
@@ -304,91 +456,40 @@
             if (view === 'user') {
                 userView.classList.remove('hidden');
                 adminView.classList.add('hidden');
-                btnUser.classList.add('bg-blue-600', 'text-white');
-                btnAdmin.classList.remove('bg-red-600', 'text-white');
-                backToCourses(); // Reset to list when switching back
+                btnUser.className = "px-5 py-2 rounded-full bg-white text-indigo-900 transition-all font-black shadow-inner";
+                btnAdmin.className = "px-5 py-2 rounded-full hover:bg-indigo-800 transition-all font-black";
+                backToCourses();
             } else {
                 userView.classList.add('hidden');
                 adminView.classList.remove('hidden');
-                btnAdmin.classList.add('bg-red-600', 'text-white');
-                btnUser.classList.remove('bg-blue-600', 'text-white');
+                btnAdmin.className = "px-5 py-2 rounded-full bg-white text-indigo-900 transition-all font-black shadow-inner";
+                btnUser.className = "px-5 py-2 rounded-full hover:bg-indigo-800 transition-all font-black";
             }
-            window.scrollTo(0, 0);
         }
 
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-50', 'text-blue-600');
-                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+        function switchAdminTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+            document.querySelectorAll('.admin-tab-btn').forEach(b => {
+                b.classList.remove('bg-indigo-50', 'text-indigo-700');
+                b.classList.add('text-slate-500', 'hover:bg-slate-50');
             });
-            document.getElementById('tab-btn-' + tabId).classList.add('bg-blue-50', 'text-blue-600');
-            window.scrollTo(0, 0);
+            document.getElementById('tab-btn-' + id).classList.add('bg-indigo-50', 'text-indigo-700');
         }
 
-        function renderUserCourses() {
-            const grid = document.getElementById('user-courses-grid');
-            grid.innerHTML = INITIAL_COURSES.map(course => `
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all group duration-300 cursor-pointer" onclick="openCourse(${course.id})">
-                    <div class="h-32 sm:h-40 bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center group-hover:from-blue-100 transition-all">
-                        <i data-lucide="play-circle" class="w-12 h-12 text-blue-500 opacity-40 group-hover:scale-110 transition-transform"></i>
-                    </div>
-                    <div class="p-5">
-                        <h3 class="font-bold text-lg mb-3 text-gray-800 leading-tight">${course.title}</h3>
-                        <div class="flex flex-col gap-2 mb-5 text-gray-500">
-                            <div class="flex items-center">
-                                <i data-lucide="video" class="w-4 h-4 ml-2 text-blue-400"></i>
-                                <span class="text-xs sm:text-sm">${course.lessons.length} مقاطع فيديو</span>
-                            </div>
-                            <div class="flex items-center">
-                                <i data-lucide="clock" class="w-4 h-4 ml-2 text-blue-400"></i>
-                                <span class="text-xs sm:text-sm">المدة: ${course.duration}</span>
-                            </div>
-                        </div>
-                        <button class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl hover:bg-blue-700 transition-all text-sm">
-                            دخول الدورة
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
+        function updateStats() {
+            const students = COURSES.reduce((a, b) => a + b.students, 0);
+            const revenue = COURSES.reduce((a, b) => a + (b.students * b.price), 0);
+            document.getElementById('total-students').textContent = students.toLocaleString();
+            document.getElementById('total-revenue').textContent = revenue.toLocaleString() + ' ريال';
+            document.getElementById('total-courses-count').textContent = COURSES.length;
         }
 
-        function renderAdminStats() {
-            const totalStudents = INITIAL_COURSES.reduce((sum, c) => sum + c.students, 0);
-            const totalRevenue = INITIAL_COURSES.reduce((sum, c) => sum + c.income, 0);
-            document.getElementById('total-students').textContent = totalStudents.toLocaleString();
-            document.getElementById('total-revenue').textContent = totalRevenue.toLocaleString() + ' ريال';
-        }
-
-        function renderAdminTable() {
-            const tbody = document.getElementById('admin-courses-table');
-            tbody.innerHTML = INITIAL_COURSES.map(c => `
-                <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-4 font-medium text-gray-800">${c.title}</td>
-                    <td class="p-4 text-center">${c.students}</td>
-                    <td class="p-4 text-center">${c.price} ر.س</td>
-                    <td class="p-4 text-center font-bold text-green-600">${c.income.toLocaleString()} ر.س</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderUploadSelect() {
-            const select = document.getElementById('course-select-upload');
-            if (select) select.innerHTML = INITIAL_COURSES.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
-        }
-
-        function mockAction(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.remove('translate-y-32');
-            toast.classList.add('translate-y-0');
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0');
-                toast.classList.add('translate-y-32');
-            }, 3000);
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.remove('translate-y-40');
+            setTimeout(() => t.classList.add('translate-y-40'), 3000);
         }
 
         window.onload = initApp;
